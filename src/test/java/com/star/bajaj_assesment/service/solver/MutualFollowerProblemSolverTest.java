@@ -37,16 +37,24 @@ class MutualFollowerProblemSolverTest {
         
         // Then
         assertNotNull(result);
-        assertEquals(1, result.getPairs().size());
+        assertEquals(2, result.getPairs().size());
         
-        // Check that the pair contains [1, 2] (user1 and user2 follow each other)
-        int[] pair = result.getPairs().get(0);
-        assertEquals(1, pair[0]);
-        assertEquals(2, pair[1]);
+        // Check that the pairs are [1, 2] and [1, 3]
+        assertTrue(containsPair(result.getPairs(), 1, 2), "Should contain pair [1, 2]");
+        assertTrue(containsPair(result.getPairs(), 1, 3), "Should contain pair [1, 3]");
         
         // Check registration number and outcome
         assertEquals(TEST_REG_NO, result.getRegNo());
         assertEquals(result.getPairs(), result.getOutcome());
+    }
+    
+    private boolean containsPair(List<int[]> pairs, int a, int b) {
+        for (int[] pair : pairs) {
+            if (pair.length == 2 && pair[0] == a && pair[1] == b) {
+                return true;
+            }
+        }
+        return false;
     }
     
     @Test

@@ -4,6 +4,7 @@ import com.star.bajaj_assesment.model.domain.MutualFollowerResult;
 import com.star.bajaj_assesment.model.domain.Problem;
 import com.star.bajaj_assesment.model.domain.User;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -11,6 +12,9 @@ import java.util.*;
 @Slf4j
 @Service
 public class MutualFollowerProblemSolver implements ProblemSolver {
+
+    @Value("${app.user.regNo}")
+    private String regNo;
 
     @Override
     public Object solve(Problem problem) {
@@ -28,7 +32,7 @@ public class MutualFollowerProblemSolver implements ProblemSolver {
         List<int[]> mutualFollowerPairs = findMutualFollowers(followersMap);
         
         log.info("Found {} mutual follower pairs", mutualFollowerPairs.size());
-        return new MutualFollowerResult(mutualFollowerPairs);
+        return new MutualFollowerResult(mutualFollowerPairs, regNo);
     }
     
     private Map<Integer, Set<Integer>> buildFollowersMap(List<User> users) {
@@ -80,6 +84,9 @@ public class MutualFollowerProblemSolver implements ProblemSolver {
                 }
             }
         }
+        
+        // Sort the result by the first element of each pair
+        result.sort(Comparator.comparingInt(pair -> pair[0]));
         
         return result;
     }

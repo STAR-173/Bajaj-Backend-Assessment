@@ -1,5 +1,6 @@
 package com.star.bajaj_assesment.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.star.bajaj_assesment.exception.ApiException;
 import com.star.bajaj_assesment.model.domain.Problem;
 import com.star.bajaj_assesment.model.request.InitialRequest;
@@ -25,6 +26,7 @@ public class ProblemProcessingService {
     private final AuthService authService;
     private final ProblemSolverFactory problemSolverFactory;
     private final InitialRequest initialRequest;
+    private final ObjectMapper objectMapper;
     
     @Value("${app.user.regNo}")
     private String regNo;
@@ -46,11 +48,18 @@ public class ProblemProcessingService {
                 throw new ApiException("Failed to extract valid problem from API response");
             }
             
+            // Log problem details
+            logProblemDetails(problem);
+            
             // Step 4: Solve the problem using appropriate solver
             ProblemSolver solver = problemSolverFactory.getSolver(problem);
             Object solution = solver.solve(problem);
             
-            log.info("Problem solved. Solution: {}", solution);
+            try {
+                log.info("Problem solved. Solution: {}", objectMapper.writeValueAsString(solution));
+            } catch (Exception e) {
+                log.debug("Failed to serialize solution for logging", e);
+            }
             
             // Step 5: Submit the solution - COMMENTED OUT FOR NOW
             /* 
@@ -67,6 +76,22 @@ public class ProblemProcessingService {
         } catch (Exception e) {
             log.error("Error during problem processing", e);
             return false;
+        }
+    }
+    
+    /**
+     * Logs detailed information about the problem
+     */
+    private void logProblemDetails(Problem problem) {
+        if (problem.isMutualFollowerProblem()) {
+            log.info("Detected Mutual Follower Problem (Question 1)");
+            log.info("Number of users: {}", problem.getUsers().size());
+        } else if (problem.isNthLevelFollowerProblem()) {
+            log.info("Detected Nth Level Follower Problem (Question 2)");
+            log.info("Number of users: {}, N: {}, findId: {}", 
+                    problem.getUsers().size(), problem.getN(), problem.getFindId());
+        } else {
+            log.warn("Unknown problem type");
         }
     }
 } 

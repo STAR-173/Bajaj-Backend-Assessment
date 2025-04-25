@@ -4,6 +4,7 @@ import com.star.bajaj_assesment.model.domain.NthLevelResult;
 import com.star.bajaj_assesment.model.domain.Problem;
 import com.star.bajaj_assesment.model.domain.User;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -11,6 +12,9 @@ import java.util.*;
 @Slf4j
 @Service
 public class NthLevelFollowerProblemSolver implements ProblemSolver {
+
+    @Value("${app.user.regNo}")
+    private String regNo;
 
     @Override
     public Object solve(Problem problem) {
@@ -35,7 +39,7 @@ public class NthLevelFollowerProblemSolver implements ProblemSolver {
         log.info("Found {} followers at level {} for user {}", 
                 nthLevelFollowers.size(), targetLevel, targetUserId);
                 
-        return new NthLevelResult(nthLevelFollowers);
+        return new NthLevelResult(nthLevelFollowers, regNo);
     }
     
     private Map<Integer, List<Integer>> buildAdjacencyList(List<User> users) {

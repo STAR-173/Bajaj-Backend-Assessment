@@ -3,7 +3,9 @@ package com.star.bajaj_assesment.service.solver;
 import com.star.bajaj_assesment.model.domain.MutualFollowerResult;
 import com.star.bajaj_assesment.model.domain.Problem;
 import com.star.bajaj_assesment.model.domain.User;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Arrays;
 import java.util.List;
@@ -13,6 +15,12 @@ import static org.junit.jupiter.api.Assertions.*;
 class MutualFollowerProblemSolverTest {
 
     private final MutualFollowerProblemSolver solver = new MutualFollowerProblemSolver();
+    private final String TEST_REG_NO = "RA2211029010006";
+
+    @BeforeEach
+    void setUp() {
+        ReflectionTestUtils.setField(solver, "regNo", TEST_REG_NO);
+    }
 
     @Test
     void shouldFindMutualFollowers() {
@@ -35,6 +43,10 @@ class MutualFollowerProblemSolverTest {
         int[] pair = result.getPairs().get(0);
         assertEquals(1, pair[0]);
         assertEquals(2, pair[1]);
+        
+        // Check registration number and outcome
+        assertEquals(TEST_REG_NO, result.getRegNo());
+        assertEquals(result.getPairs(), result.getOutcome());
     }
     
     @Test
@@ -48,6 +60,8 @@ class MutualFollowerProblemSolverTest {
         // Then
         assertNotNull(result);
         assertTrue(result.getPairs().isEmpty());
+        assertEquals(TEST_REG_NO, result.getRegNo());
+        assertTrue(result.getOutcome().isEmpty());
     }
     
     @Test

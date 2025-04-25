@@ -3,7 +3,9 @@ package com.star.bajaj_assesment.service.solver;
 import com.star.bajaj_assesment.model.domain.NthLevelResult;
 import com.star.bajaj_assesment.model.domain.Problem;
 import com.star.bajaj_assesment.model.domain.User;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Arrays;
 import java.util.List;
@@ -13,6 +15,12 @@ import static org.junit.jupiter.api.Assertions.*;
 class NthLevelFollowerProblemSolverTest {
 
     private final NthLevelFollowerProblemSolver solver = new NthLevelFollowerProblemSolver();
+    private final String TEST_REG_NO = "RA2211029010006";
+
+    @BeforeEach
+    void setUp() {
+        ReflectionTestUtils.setField(solver, "regNo", TEST_REG_NO);
+    }
 
     @Test
     void shouldFindFirstLevelFollowers() {
@@ -33,6 +41,10 @@ class NthLevelFollowerProblemSolverTest {
         assertEquals(2, result.getUsers().size());
         assertTrue(result.getUsers().contains(2));
         assertTrue(result.getUsers().contains(3));
+        
+        // Check registration number and outcome
+        assertEquals(TEST_REG_NO, result.getRegNo());
+        assertEquals(result.getUsers(), result.getOutcome());
     }
     
     @Test
@@ -55,6 +67,10 @@ class NthLevelFollowerProblemSolverTest {
         assertEquals(2, result.getUsers().size());
         assertTrue(result.getUsers().contains(4));
         assertTrue(result.getUsers().contains(5));
+        
+        // Check registration number and outcome
+        assertEquals(TEST_REG_NO, result.getRegNo());
+        assertEquals(result.getUsers(), result.getOutcome());
     }
     
     @Test
@@ -68,6 +84,8 @@ class NthLevelFollowerProblemSolverTest {
         // Then
         assertNotNull(result);
         assertTrue(result.getUsers().isEmpty());
+        assertEquals(TEST_REG_NO, result.getRegNo());
+        assertTrue(result.getOutcome().isEmpty());
     }
     
     @Test
